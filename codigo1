@@ -1,0 +1,49 @@
+Modelo de consulta base de engajamento:
+select
+ b.globo_id,
+ b.email,
+ b.primeiro_nome,
+ b.sobrenome,
+ b.cidade,
+ b.estado,
+ b.ano_nascimento,
+ b.mes_nascimento,
+ b.dia_nascimento,
+ b.dt_assinatura,
+ b.tipo_assinante,
+ b.sistema,
+ b.idade,
+ (case
+ when b.pais = 'Brazil' THEN 'BR'
+ end) as pais,
+ (case
+ when lower(b.sexo) = 'feminino' then
+'F'
+ when lower(b.sexo) = 'masculino' then
+'M'
+ end) as sexo,
+ (case
+ when b.telefone like '%-%' then
+ '+55' +
+replace(replace(telefone,char(40),'
+'),char(41),' ')
+ when len(b.telefone) = 11 then
+ '+55 ' + substring(telefone,1,2)
++ ' ' + substring(telefone,3,5) + '-' +
+substring(telefone,8,4)
+ when len(b.telefone) = 10 then
+'+55 ' + substring(telefone,1,2) + ' ' +
+substring(telefone,3,4) + '-' +
+substring(telefone,7,4)
+ end) as telefone,
+ (case
+ when b.mes_nascimento is not null and
+b.ano_nascimento is not null and
+b.dia_nascimento is not null then
+
+concat(b.mes_nascimento,'/',b.dia_nascimento
+,'/', b.ano_nascimento)
+ end) as dt_nascimento
+from BASE_DE_ASSINANTES_DO_PRODUTO b
+join BASE_DE_REFERENCIA p on b.globo_id =
+p.globo_id
